@@ -1,0 +1,12 @@
+version: '3'
+services:
+  watchtower:
+    image: containrrr/watchtower:latest
+    restart: unless-stopped
+    hostname: 'Stork'
+    environment:
+      TZ: 'Europe/Oslo'
+      WATCHTOWER_MONITOR_ONLY: 'true'
+      WATCHTOWER_SCHEDULE: '0 0 0 * * 0'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

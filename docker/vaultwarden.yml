@@ -1,0 +1,29 @@
+version: '3'
+services:
+  app:
+    image: vaultwarden/server:latest
+    restart: unless-stopped
+    ports:
+      - 8100:80
+    environment:
+      UID: '1000'
+      GID: '1000'
+      TZ: 'Europe/Oslo'
+      DATABASE_URL: 'mysql://vaultwarden:ScvovYiwHxzbPGAK4gd5kEaUbP2aZg@db:3306/vaultwarden'
+      ADMIN_TOKEN: '6RAV4k01ofj6yk/dykcP8woYv5mGEdGjJ5GCq2CCPLARi5DekzELlkqnhRJX6O/5'
+    volumes:
+      - /mnt/user/appdata/vaultwarden/data:/data
+    depends_on:
+      - db
+  db:
+    image: mariadb:10.6
+    restart: unless-stopped
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-read-only-compressed=OFF
+    environment:
+      MYSQL_ROOT_PASSWORD: 'RwwA!Ae5NhTM#Q9$YbYs4VxB^cj@EW'
+      MYSQL_PASSWORD: 'ScvovYiwHxzbPGAK4gd5kEaUbP2aZg'
+      MYSQL_DATABASE: 'vaultwarden'
+      MYSQL_USER: 'vaultwarden'
+    volumes:
+      - /mnt/user/appdata/vaultwarden/db:/var/lib/mysql
+

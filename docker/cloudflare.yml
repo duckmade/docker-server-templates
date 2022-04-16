@@ -1,0 +1,41 @@
+version: '3'
+services:
+  app:
+    image: oznu/cloudflare-ddns:latest
+    restart: unless-stopped
+    environment:
+      PUID: '0'
+      PGID: '0'
+      API_KEY: '-snJMF4-w1X4-HImKXlTq3SLXxRgCPn5x98C3xi7'
+      ZONE: 'duckmade.io'
+      SUBDOMAIN: 'nextcloud'
+      PROXIED: 'true'
+      CRON: '*/15 * * * *'
+  nginx:
+    image: jc21/nginx-proxy-manager:latest
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+      - 81:81
+    environment:
+      DB_MYSQL_HOST: 'db'
+      DB_MYSQL_PORT: '3306'
+      DB_MYSQL_USER: 'nginx'
+      DB_MYSQL_PASSWORD: 'DGbqg*hCvdbGSSmLZ8n*Ty^2Tk#29G'
+      DB_MYSQL_NAME: 'nginx'
+    volumes:
+      - /mnt/user/appdata/nginx-proxy-manager/data:/data
+      - /mnt/user/appdata/nginx-proxy-manager/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - db
+  db:
+    image: jc21/mariadb-aria:latest
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 'mnU^hTkf69UDp7MWek^brg#Dx5sgsW'
+      MYSQL_DATABASE: 'nginx'
+      MYSQL_USER: 'nginx'
+      MYSQL_PASSWORD: 'DGbqg*hCvdbGSSmLZ8n*Ty^2Tk#29G'
+    volumes:
+      - /mnt/user/appdata/nginx-proxy-manager/db:/var/lib/mysql

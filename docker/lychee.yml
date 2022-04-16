@@ -1,0 +1,32 @@
+version: '3'
+services:
+  app:
+    image: ghcr.io/linuxserver/lychee:latest
+    restart: unless-stopped
+    ports:
+      - 8999:80
+    environment:
+      PUID: '1000'
+      PGID: '1000'
+      TZ: 'Europe/Oslo'
+      DB_HOST: 'db'
+      DB_PORT: '3306'
+      DB_USERNAME: 'lychee'
+      DB_PASSWORD: 'KQPVSfCXTt@e%@EYs4u7V9UcRW#Hy5'
+      DB_DATABASE: 'lychee'
+    volumes:
+      - /mnt/user/appdata/lychee/config:/config
+      - /mnt/user/appdata/lychee/pictures:/pictures
+    depends_on:
+      - db
+  db:
+    image: mariadb:10.6
+    restart: unless-stopped
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-read-only-compressed=OFF
+    environment:
+      MYSQL_ROOT_PASSWORD: 'dZBToJY%r4*!5kPZ*Y@tfK4Bczx5vs'
+      MYSQL_PASSWORD: 'KQPVSfCXTt@e%@EYs4u7V9UcRW#Hy5'
+      MYSQL_DATABASE: 'lychee'
+      MYSQL_USER: 'lychee'
+    volumes:
+      - /mnt/user/appdata/lychee/db:/var/lib/mysql
