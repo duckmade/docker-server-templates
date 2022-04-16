@@ -12,8 +12,8 @@ services:
       APC_SHM_SIZE: '512M'
       OPCACHE_MEM_SIZE: '512'
       CRON_PERIOD: '15m'
-      TZ: 'Europe/Oslo'
-      DOMAIN: 'nextcloud.duckmade.io'
+      TZ: '${NEXTCLOUD_TZ}'
+      DOMAIN: '${NEXTCLOUD_DOMAIN}'
       DB_TYPE: 'mysql'
       DB_PASSWORD: '^#s4Cw&#9E22hDK&dX66fhf4EU%ZcR'
       DB_NAME: 'nextcloud'
@@ -32,8 +32,8 @@ services:
     restart: unless-stopped
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-read-only-compressed=OFF
     environment:
-      MYSQL_ROOT_PASSWORD: '4x9vHTeT5X^jL&74poLbdQ#bTA2CJ*'
-      MYSQL_PASSWORD: '^#s4Cw&#9E22hDK&dX66fhf4EU%ZcR'
+      MYSQL_ROOT_PASSWORD: '${NEXTCLOUD_MYSQL_ROOT_PASSWORD}'
+      MYSQL_PASSWORD: '${NEXTCLOUD_MYSQL_PASSWORD}'
       MYSQL_DATABASE: 'nextcloud'
       MYSQL_USER: 'nextcloud'
     volumes:

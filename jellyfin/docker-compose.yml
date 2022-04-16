@@ -2,7 +2,8 @@ version: '3'
 services:
   app:
     image: ghcr.io/linuxserver/jellyfin:latest
-    hostname: 'Stork'
+    hostname: '${JELLYFIN_HOSTNAME}'
+    network_mode: 'host'
     restart: unless-stopped
     ports:
       - 8096:8096
@@ -12,8 +13,7 @@ services:
     environment:
       PUID: '0'
       PGID: '0'
-      TZ: 'Europe/Oslo'
-      JELLYFIN_PublishedServerUrl: '192.168.1.142'
+      TZ: '${JELLYFIN_TZ}'
       DOCKER_MODS: 'linuxserver/mods:jellyfin-amd'
     volumes:
       - /mnt/user/appdata/jellyfin:/config
@@ -29,7 +29,7 @@ services:
     environment:
       PUID: '0'
       PGID: '0'
-      TZ: 'Europe/Oslo'
+      TZ: '${JELLYFIN_TZ}'
     volumes:
       - /mnt/user/appdata/radarr:/config
       - /mnt/user/data:/data
@@ -41,7 +41,7 @@ services:
     environment:
       PUID: '0'
       PGID: '0'
-      TZ: 'Europe/Oslo'
+      TZ: '${JELLYFIN_TZ}'
     volumes:
       - /mnt/user/appdata/lidarr:/config
       - /mnt/user/data:/data
@@ -53,7 +53,7 @@ services:
     environment:
       PUID: '0'
       PGID: '0'
-      TZ: 'Europe/Oslo'
+      TZ: '${JELLYFIN_TZ}'
     volumes:
       - /mnt/user/appdata/sonarr:/config
       - /mnt/user/data:/data
@@ -65,7 +65,7 @@ services:
     environment:
       PUID: '0'
       PGID: '0'
-      TZ: 'Europe/Oslo'
+      TZ: '${JELLYFIN_TZ}'
     volumes:
       - /mnt/user/appdata/prowlarr:/config
   transmission:
@@ -76,7 +76,7 @@ services:
       - 51413:51413
       - 51413:51413/udp
     environment:
-      TZ: 'Europe/Oslo'
+      TZ: '${JELLYFIN_TZ}'
       PUID: '0'
       PGID: '0'
     volumes:

@@ -4,10 +4,10 @@ services:
     image: ghcr.io/duckmade/tweet-forward:latest
     restart: unless-stopped
     environment:
-      API_KEY: 'fKNJTf4N1bcgJOYPdpmIAi21U'
-      API_SECRET: 'LrbzyZUcZmkUxPqW6Dlo7BV0PLxhTCGMUyKa9kthWbP74XoJPE'
-      ACCESS_TOKEN: '1488857630177124353-ltf9fzGVDdmCIUerMQ7wGK3rbooVvV'
-      ACCESS_SECRET: '5N9K26m5TchqKXMvxlS8Eo1YI5zRomAw6aLn2pUPxD8ff'
-      FOLLOW: '1488857630177124353'
+      API_KEY: '${DUCKMADE_API_KEY}'
+      API_SECRET: '${DUCKMADE_API_SECRET}'
+      ACCESS_TOKEN: '${DUCKMADE_ACCESS_TOKEN}'
+      ACCESS_SECRET: '${DUCKMADE_ACCESS_SECRET}'
+      FOLLOW: '${DUCKMADE_FOLLOW}'
       CLIENTS: 'telegram'
-      TELEGRAM_CHANNEL: 'duckmade'
+      TELEGRAM_CHANNEL: '${DUCKMADE_TELEGRAM_CHANNEL}'

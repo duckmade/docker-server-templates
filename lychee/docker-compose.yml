@@ -8,11 +8,11 @@ services:
     environment:
       PUID: '1000'
       PGID: '1000'
-      TZ: 'Europe/Oslo'
+      TZ: '${LYCHEE_TZ}'
       DB_HOST: 'db'
       DB_PORT: '3306'
       DB_USERNAME: 'lychee'
-      DB_PASSWORD: 'KQPVSfCXTt@e%@EYs4u7V9UcRW#Hy5'
+      DB_PASSWORD: '${LYCHEE_MYSQL_PASSWORD}'
       DB_DATABASE: 'lychee'
     volumes:
       - /mnt/user/appdata/lychee/config:/config
@@ -24,8 +24,8 @@ services:
     restart: unless-stopped
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-read-only-compressed=OFF
     environment:
-      MYSQL_ROOT_PASSWORD: 'dZBToJY%r4*!5kPZ*Y@tfK4Bczx5vs'
-      MYSQL_PASSWORD: 'KQPVSfCXTt@e%@EYs4u7V9UcRW#Hy5'
+      MYSQL_ROOT_PASSWORD: '${LYCHEE_MYSQL_ROOT_PASSWORD}'
+      MYSQL_PASSWORD: '${LYCHEE_MYSQL_PASSWORD}'
       MYSQL_DATABASE: 'lychee'
       MYSQL_USER: 'lychee'
     volumes:
