@@ -10,7 +10,7 @@ services:
       ZONE: '${CLOUDFLARE_ZONE}'
       SUBDOMAIN: '${CLOUDFLARE_SUBDOMAIN}'
       PROXIED: 'true'
-      CRON: '*/15 * * * *'
+      CRON: '*/30 * * * *'
   nginx:
     image: jc21/nginx-proxy-manager:latest
     restart: unless-stopped
@@ -18,24 +18,12 @@ services:
       - 80:80
       - 443:443
       - 81:81
-    environment:
-      DB_MYSQL_HOST: 'db'
-      DB_MYSQL_PORT: '3306'
-      DB_MYSQL_USER: 'nginx'
-      DB_MYSQL_PASSWORD: '${CLOUDFLARE_MYSQL_PASSWORD}'
-      DB_MYSQL_NAME: 'nginx'
     volumes:
       - /mnt/user/appdata/nginx-proxy-manager/data:/data
       - /mnt/user/appdata/nginx-proxy-manager/letsencrypt:/etc/letsencrypt
-    depends_on:
-      - db
-  db:
-    image: jc21/mariadb-aria:latest
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: '${CLOUDFLARE_MYSQL_ROOT_PASSWORD}'
-      MYSQL_PASSWORD: '${CLOUDFLARE_MYSQL_PASSWORD}'
-      MYSQL_DATABASE: 'nginx'
-      MYSQL_USER: 'nginx'
-    volumes:
-      - /mnt/user/appdata/nginx-proxy-manager/db:/var/lib/mysql
+    networks:
+      br0:
+        ipv4_address: '${CLOUDFLARE_BR0_IP}'
+networks:
+  br0:
+    external: true
