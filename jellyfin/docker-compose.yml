@@ -20,9 +20,6 @@ services:
       - /tmp/jellyfin:/transcodes
     devices:
       - /dev/dri:/dev/dri
-    networks:
-      br0:
-        ipv4_address: '${JELLYFIN_BR0_IP}'
   radarr:
     image: ghcr.io/linuxserver/radarr:latest
     restart: unless-stopped
@@ -86,6 +83,3 @@ services:
       - /mnt/user/data/torrents:/data/torrents
       - /mnt/user/data/torrents:/downloads
       - /mnt/user/data/torrents/watch:/watch
-networks:
-  br0:
-    external: true
