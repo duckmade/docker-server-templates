@@ -1,32 +1,43 @@
 version: '3'
 services:
+
   app:
     image: ghcr.io/linuxserver/lychee:latest
     restart: unless-stopped
-    ports:
-      - 8999:80
     environment:
       PUID: '1000'
       PGID: '1000'
-      TZ: '${LYCHEE_TZ}'
+      TZ: '${TZ}'
       DB_HOST: 'db'
       DB_PORT: '3306'
       DB_USERNAME: 'lychee'
-      DB_PASSWORD: '${LYCHEE_MYSQL_PASSWORD}'
+      DB_PASSWORD: '${MYSQL_PASSWORD}'
       DB_DATABASE: 'lychee'
     volumes:
       - /mnt/user/appdata/lychee/config:/config
       - /mnt/user/appdata/lychee/pictures:/pictures
+    labels:
+      traefik.enable: true
+      traefik.http.routers.lychee.entrypoints: 'websecure'
+      traefik.http.routers.lychee.rule: 'Host(`${DOMAIN_PUBLIC}`, `${DOMAIN}`)'
+    networks:
+      default:
+      proxy:
     depends_on:
       - db
+
   db:
     image: mariadb:10.6
     restart: unless-stopped
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-read-only-compressed=OFF
     environment:
-      MYSQL_ROOT_PASSWORD: '${LYCHEE_MYSQL_ROOT_PASSWORD}'
-      MYSQL_PASSWORD: '${LYCHEE_MYSQL_PASSWORD}'
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
       MYSQL_DATABASE: 'lychee'
       MYSQL_USER: 'lychee'
     volumes:
       - /mnt/user/appdata/lychee/db:/var/lib/mysql
+
+networks:
+  proxy:
+    external: true

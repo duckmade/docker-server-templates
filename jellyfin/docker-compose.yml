@@ -1,18 +1,14 @@
 version: '3'
 services:
+
   app:
     image: ghcr.io/linuxserver/jellyfin:latest
-    hostname: '${JELLYFIN_HOSTNAME}'
+    hostname: '${HOST_JELLYFIN}'
     restart: unless-stopped
-    ports:
-      - 8096:8096
-      - 8920:8920
-      - 7359:7359/udp
-      - 1900:1900/udp
     environment:
-      PUID: '0'
-      PGID: '0'
-      TZ: '${JELLYFIN_TZ}'
+      PUID: '0' # because of a problem with amd hw-transcoding
+      PGID: '0' # because of a problem with amd hw-transcoding
+      TZ: '${TZ}'
       DOCKER_MODS: 'linuxserver/mods:jellyfin-amd'
     volumes:
       - /mnt/user/appdata/jellyfin:/config
@@ -20,66 +16,120 @@ services:
       - /tmp/jellyfin:/transcodes
     devices:
       - /dev/dri:/dev/dri
+    labels:
+      traefik.enable: true
+      traefik.http.routers.jellyfin.entrypoints: 'websecure'
+      traefik.http.routers.jellyfin.rule: 'Host(`${DOMAIN_JELLYFIN_PUBLIC}`, `${DOMAIN_JELLYFIN}`)'
+      traefik.http.services.jellyfin.loadbalancer.server.port: '8096'
+    networks:
+      proxy:
+      br0:
+        ipv4_address: '${IP_JELLYFIN}'
+
   radarr:
     image: ghcr.io/linuxserver/radarr:latest
     restart: unless-stopped
-    ports:
-      - 7878:7878
     environment:
-      PUID: '0'
-      PGID: '0'
-      TZ: '${JELLYFIN_TZ}'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+      TZ: '${TZ}'
     volumes:
       - /mnt/user/appdata/radarr:/config
       - /mnt/user/data:/data
+    labels:
+      traefik.enable: true
+      traefik.http.routers.radarr.entrypoints: 'websecure'
+      traefik.http.routers.radarr.rule: 'Host(`${DOMAIN_RADARR}`)'
+    networks:
+      default:
+      proxy:
+
+
   lidarr:
     image: ghcr.io/linuxserver/lidarr:latest
     restart: unless-stopped
-    ports:
-      - 8686:8686
     environment:
-      PUID: '0'
-      PGID: '0'
-      TZ: '${JELLYFIN_TZ}'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+      TZ: '${TZ}'
     volumes:
       - /mnt/user/appdata/lidarr:/config
       - /mnt/user/data:/data
+    labels:
+      traefik.enable: true
+      traefik.http.routers.lidarr.entrypoints: 'websecure'
+      traefik.http.routers.lidarr.rule: 'Host(`${DOMAIN_LIDARR}`)'
+    networks:
+      default:
+      proxy:
+
+
   sonarr:
     image: ghcr.io/linuxserver/sonarr:latest
     restart: unless-stopped
-    ports:
-      - 8989:8989
     environment:
-      PUID: '0'
-      PGID: '0'
-      TZ: '${JELLYFIN_TZ}'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+      TZ: '${TZ}'
     volumes:
       - /mnt/user/appdata/sonarr:/config
       - /mnt/user/data:/data
+    labels:
+      traefik.enable: true
+      traefik.http.routers.sonarr.entrypoints: 'websecure'
+      traefik.http.routers.sonarr.rule: 'Host(`${DOMAIN_SONARR}`)'
+    networks:
+      default:
+      proxy:
+
+
   prowlarr:
     image: ghcr.io/linuxserver/prowlarr:develop
     restart: unless-stopped
-    ports:
-      - 9696:9696
     environment:
-      PUID: '0'
-      PGID: '0'
-      TZ: '${JELLYFIN_TZ}'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+      TZ: '${TZ}'
     volumes:
       - /mnt/user/appdata/prowlarr:/config
+    labels:
+      traefik.enable: true
+      traefik.http.routers.prowlarr.entrypoints: 'websecure'
+      traefik.http.routers.prowlarr.rule: 'Host(`${DOMAIN_PROWLARR}`)'
+    networks:
+      default:
+      proxy:
+
+
   transmission:
     image: ghcr.io/linuxserver/transmission:latest
     restart: unless-stopped
-    ports:
-      - 9091:9091
-      - 51413:51413
-      - 51413:51413/udp
     environment:
-      TZ: '${JELLYFIN_TZ}'
-      PUID: '0'
-      PGID: '0'
+      TZ: '${TZ}'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
     volumes:
       - /mnt/user/appdata/transmission:/config
       - /mnt/user/data/torrents:/data/torrents
       - /mnt/user/data/torrents:/downloads
       - /mnt/user/data/torrents/watch:/watch
+    labels:
+      traefik.enable: true
+      traefik.http.routers.transmission.entrypoints: 'websecure'
+      traefik.http.routers.transmission.rule: 'Host(`${DOMAIN_TRANSMISSION}`)'
+      traefik.http.services.transmission.loadbalancer.server.port: '9091'
+      traefik.tcp.routers.transmission-tcp.entrypoints: 'transmissiontcp'
+      traefik.tcp.routers.transmission-tcp.rule: 'HostSNI(`*`)'
+      traefik.tcp.services.transmission.loadbalancer.server.port: '51413'
+      traefik.udp.routers.transmission-udp.entrypoints: 'transmissionudp'
+      traefik.udp.services.transmission.loadbalancer.server.port: '51413'
+    networks:
+      default:
+      proxy:
+
+
+networks:
+  proxy:
+    external: true
+  br0:
+    external: true

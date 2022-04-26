@@ -1,0 +1,14 @@
+version: '3'
+services:
+
+  app:
+    image: oznu/cloudflare-ddns:latest
+    restart: unless-stopped
+    environment:
+      PUID: '0'
+      PGID: '0'
+      API_KEY: '${API_KEY}'
+      ZONE: '${ZONE}'
+      SUBDOMAIN: '${SUBDOMAIN}'
+      PROXIED: 'true'
+      CRON: '*/30 * * * *'

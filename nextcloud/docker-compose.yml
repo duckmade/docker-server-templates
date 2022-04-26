@@ -1,44 +1,57 @@
 version: '3'
 services:
+
   app:
-    image: hoellen/nextcloud:latest
+    image: ghcr.io/hoellen/nextcloud:latest
     restart: unless-stopped
-    ports:
-      - 8888:8888
     environment:
-      UID: '1000'
-      GID: '1000'
       UPLOAD_MAX_SIZE: '10G'
       APC_SHM_SIZE: '512M'
-      OPCACHE_MEM_SIZE: '512'
       CRON_PERIOD: '15m'
-      TZ: '${NEXTCLOUD_TZ}'
-      DOMAIN: '${NEXTCLOUD_DOMAIN}'
+      TZ: '${TZ}'
+      DOMAIN: '${DOMAIN_PUBLIC}'
       DB_TYPE: 'mysql'
-      DB_PASSWORD: '^#s4Cw&#9E22hDK&dX66fhf4EU%ZcR'
+      DB_PASSWORD: '${MYSQL_PASSWORD}'
       DB_NAME: 'nextcloud'
       DB_USER: 'nextcloud'
       DB_HOST: 'db'
     volumes:
       - /mnt/user/appdata/nextcloud/data:/data
-      - /mnt/user/appdata/nextcloud/config:/config
-      - /mnt/user/appdata/nextcloud/apps:/apps2
+      - /mnt/user/appdata/nextcloud/config:/nextcloud/config
+      - /mnt/user/appdata/nextcloud/apps:/nextcloud/apps2
       - /mnt/user/appdata/nextcloud/themes:/nextcloud/themes
+    labels:
+      traefik.enable: true
+      traefik.http.routers.nextcloud.entrypoints: 'websecure'
+      traefik.http.routers.nextcloud.rule: 'Host(`${DOMAIN_PUBLIC}`, `${DOMAIN}`)'
+      traefik.http.routers.nextcloud.middlewares: 'nextcloud-redirectregex'
+      traefik.http.middlewares.nextcloud-redirectregex.redirectregex.regex: '^https://(.*)/.well-known/(card|cal)dav'
+      traefik.http.middlewares.nextcloud-redirectregex.redirectregex.replacement: 'https://$${1}/remote.php/dav/'
+      traefik.http.middlewares.nextcloud-redirectregex.redirectregex.permanent: true
+    networks:
+      default:
+      proxy:
     depends_on:
       - db
       - redis
+
   db:
     image: mariadb:10.6
     restart: unless-stopped
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-read-only-compressed=OFF
     environment:
-      MYSQL_ROOT_PASSWORD: '${NEXTCLOUD_MYSQL_ROOT_PASSWORD}'
-      MYSQL_PASSWORD: '${NEXTCLOUD_MYSQL_PASSWORD}'
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
       MYSQL_DATABASE: 'nextcloud'
       MYSQL_USER: 'nextcloud'
     volumes:
       - /mnt/user/appdata/nextcloud/db:/var/lib/mysql
+
   redis:
     image: redis:alpine
     volumes:
       - /mnt/user/appdata/nextcloud/redis:/data
+
+networks:
+  proxy:
+    external: true

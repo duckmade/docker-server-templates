@@ -1,44 +1,56 @@
 version: '3'
 services:
+
   app:
     image: directus/directus:latest
     restart: unless-stopped
-    ports:
-      - 8055:8055
     environment:
-      KEY: '${DIRECTUS_KEY}'
-      SECRET: '${DIRECTUS_SECRET}'
+      KEY: '${KEY}'
+      SECRET: '${SECRET}'
       DB_CLIENT: 'mysql'
       DB_HOST: 'db'
       DB_PORT: 3306
       DB_DATABASE: 'directus'
       DB_USER: 'directus'
-      DB_PASSWORD: '${DIRECTUS_MYSQL_PASSWORD}'
+      DB_PASSWORD: '${MYSQL_PASSWORD}'
       CACHE_ENABLED: 'true'
       CACHE_STORE: 'redis'
       CACHE_REDIS: 'redis://redis:6379'
       ADMIN_EMAIL: 'admin@admin.com' # change this in UI
       ADMIN_PASSWORD: 'admin' # change this in UI
-      PUBLIC_URL: '${DIRECTUS_PUBLIC_URL}'
+      PUBLIC_URL: 'https://${DOMAIN_PUBLIC}/'
     volumes:
       - /mnt/user/appdata/directus/data/uploads:/directus/uploads
       - /mnt/user/appdata/directus/data/database:/directus/database
       - /mnt/user/appdata/directus/data/extensions:/directus/extensions
+    labels:
+      traefik.enable: true
+      traefik.http.routers.directus.entrypoints: 'websecure'
+      traefik.http.routers.directus.rule: 'Host(`${DOMAIN_PUBLIC}`, `${DOMAIN}`)'
+    networks:
+      default:
+      proxy:
     depends_on:
       - db
       - redis
+
   db:
     image: mariadb:10.6
     restart: unless-stopped
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-read-only-compressed=OFF
     environment:
-      MYSQL_ROOT_PASSWORD: '${DIRECTUS_MYSQL_ROOT_PASSWORD}'
-      MYSQL_PASSWORD: '${DIRECTUS_MYSQL_PASSWORD}'
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
       MYSQL_DATABASE: 'directus'
       MYSQL_USER: 'directus'
     volumes:
       - /mnt/user/appdata/directus/db:/var/lib/mysql
+
   redis:
     image: redis:alpine
     volumes:
       - /mnt/user/appdata/directus/redis:/data
+
+networks:
+  proxy:
+    external: true

@@ -1,0 +1,56 @@
+version: '3'
+services:
+
+  app:
+    image: traefik:2.6
+    restart: unless-stopped
+    hostname: '${HOST}'
+    command:
+      - --accesslog.filepath=/etc/traefik/logs/access.log
+      - --accesslog.fields.names.StartUTC=drop
+      - --api.dashboard=true
+      - --certificatesresolvers.production.acme.dnschallenge=true
+      - --certificatesresolvers.production.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.production.acme.email=${CF_API_EMAIL}
+      - --certificatesresolvers.production.acme.storage=/etc/traefik/production.json
+      - --certificatesresolvers.staging.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+      - --certificatesresolvers.staging.acme.certificatesduration=24
+      - --certificatesresolvers.staging.acme.dnschallenge=true
+      - --certificatesresolvers.staging.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.staging.acme.email=${CF_API_EMAIL}
+      - --certificatesresolvers.staging.acme.storage=/etc/traefik/staging.json
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entryPoints.web.http.redirections.entrypoint.permanent=true
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls=true
+      - --entrypoints.websecure.http.tls.certresolver=production
+      - --entrypoints.transmissiontcp.address=:51413
+      - --entrypoints.transmissionudp.address=:51413/udp
+      - --global.sendanonymoususage=false
+      - --log.filepath=/etc/traefik/logs/traefik.log
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=proxy
+    environment:
+      TZ: '${TZ}'
+      CF_API_EMAIL: '${CF_API_EMAIL}'
+      CF_API_KEY: '${CF_API_KEY}'
+    volumes:
+      - /mnt/user/appdata/traefik:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      traefik.enable: true
+      traefik.http.routers.traefik.entrypoints: 'websecure'
+      traefik.http.routers.traefik.rule: 'Host(`${DOMAIN}`)'
+      traefik.http.routers.traefik.service: 'api@internal'
+    networks:
+      proxy:
+      br0:
+        ipv4_address: '${IP}'
+
+networks:
+  proxy:
+    external: true
+  br0:
+    external: true

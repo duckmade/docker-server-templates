@@ -1,0 +1,39 @@
+version: '3'
+services:
+
+  app:
+    image: cbcrowe/pihole-unbound:latest
+    restart: unless-stopped
+    hostname: '${HOST}'
+    environment:
+      FTLCONF_REPLY_ADDR4: '${IP}'
+      TZ: '${TZ}'
+      WEBPASSWORD: '${PASSWORD}'
+      WEBTHEME: 'default-light'
+      REV_SERVER: 'true'
+      REV_SERVER_DOMAIN: 'local'
+      REV_SERVER_TARGET: '192.168.1.1'
+      REV_SERVER_CIDR: '192.168.0.0/24'
+      PIHOLE_DNS_: '127.0.0.1#5335'
+      DNSSEC: true
+      DNSMASQ_LISTENING: 'single'
+    volumes:
+      - /mnt/user/appdata/pihole/data:/etc/pihole
+      - /mnt/user/appdata/pihole/dnsmasq.d:/etc/dnsmasq.d
+    labels:
+      traefik.enable: true
+      traefik.http.routers.pihole.entrypoints: 'websecure'
+      traefik.http.routers.pihole.rule: 'Host(`${DOMAIN}`)'
+      traefik.http.routers.pihole.middlewares: 'pihole-addprefix'
+      traefik.http.services.pihole.loadbalancer.server.port: '80'
+      traefik.http.middlewares.pihole-addprefix.addprefix.prefix: '/admin'
+    networks:
+      proxy:
+      br0:
+        ipv4_address: '${IP}'
+
+networks:
+  proxy:
+    external: true
+  br0:
+    external: true

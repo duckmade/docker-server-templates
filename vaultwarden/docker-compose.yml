@@ -1,28 +1,39 @@
 version: '3'
 services:
+
   app:
     image: vaultwarden/server:latest
     restart: unless-stopped
-    ports:
-      - 8100:80
     environment:
       UID: '1000'
       GID: '1000'
-      TZ: '${VAULTWARDEN_TZ}'
-      DATABASE_URL: 'mysql://vaultwarden:${VAULTWARDEN_MYSQL_PASSWORD}@db:3306/vaultwarden'
-      ADMIN_TOKEN: '${VAULTWARDEN_ADMIN_TOKEN}'
+      TZ: '${TZ}'
+      DATABASE_URL: 'mysql://vaultwarden:${MYSQL_PASSWORD}@db:3306/vaultwarden'
+      ADMIN_TOKEN: '${ADMIN_TOKEN}'
     volumes:
       - /mnt/user/appdata/vaultwarden/data:/data
+    labels:
+      traefik.enable: true
+      traefik.http.routers.vaultwarden.entrypoints: 'websecure'
+      traefik.http.routers.vaultwarden.rule: 'Host(`${DOMAIN_PUBLIC}`, `${DOMAIN}`)'
+    networks:
+      default:
+      proxy:
     depends_on:
       - db
+
   db:
     image: mariadb:10.6
     restart: unless-stopped
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-read-only-compressed=OFF
     environment:
-      MYSQL_ROOT_PASSWORD: '${VAULTWARDEN_MYSQL_ROOT_PASSWORD}'
-      MYSQL_PASSWORD: '${VAULTWARDEN_MYSQL_PASSWORD}'
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
       MYSQL_DATABASE: 'vaultwarden'
       MYSQL_USER: 'vaultwarden'
     volumes:
       - /mnt/user/appdata/vaultwarden/db:/var/lib/mysql
+
+networks:
+  proxy:
+    external: true
