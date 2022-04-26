@@ -1,0 +1,36 @@
+version: '3'
+services:
+
+  app:
+    image: grafana/loki:latest
+    restart: unless-stopped
+    command: -config.file=/etc/loki/loki-config.yml
+    volumes:
+      - /mnt/user/appdata/loki:/etc/loki
+
+  promtail:
+    image: grafana/promtail:latest
+    restart: unless-stopped
+    command: -config.file=/etc/promtail/promtail-config.yml
+    volumes:
+      - /var/log:/var/log
+      - /mnt/user/appdata/promtail:/etc/promtail
+
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    user: '${PUID}'
+    volumes:
+      - /mnt/user/appdata/grafana:/var/lib/grafana
+    labels:
+      traefik.enable: true
+      traefik.http.routers.grafana.entrypoints: 'websecure'
+      traefik.http.routers.grafana.rule: 'Host(`${GRAFANA_DOMAIN}`)'
+    networks:
+      default:
+      proxy:
+
+
+networks:
+  proxy:
+    external: true
