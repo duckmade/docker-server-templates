@@ -19,7 +19,7 @@ services:
   grafana:
     image: grafana/grafana:latest
     restart: unless-stopped
-    user: '${PUID}'
+    user: '1000'
     volumes:
       - /mnt/user/appdata/grafana:/var/lib/grafana
     labels:

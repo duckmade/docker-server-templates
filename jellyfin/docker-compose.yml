@@ -6,8 +6,8 @@ services:
     hostname: '${HOST_JELLYFIN}'
     restart: unless-stopped
     environment:
-      PUID: '0' # because of a problem with amd hw-transcoding
-      PGID: '0' # because of a problem with amd hw-transcoding
+      PUID: '1000'
+      PGID: '1000'
       TZ: '${TZ}'
       DOCKER_MODS: 'linuxserver/mods:jellyfin-amd'
     volumes:
@@ -30,8 +30,8 @@ services:
     image: ghcr.io/linuxserver/radarr:latest
     restart: unless-stopped
     environment:
-      PUID: '${PUID}'
-      PGID: '${PGID}'
+      PUID: '1000'
+      PGID: '1000'
       TZ: '${TZ}'
     volumes:
       - /mnt/user/appdata/radarr:/config
@@ -41,7 +41,6 @@ services:
       traefik.http.routers.radarr.entrypoints: 'websecure'
       traefik.http.routers.radarr.rule: 'Host(`${DOMAIN_RADARR}`)'
     networks:
-      default:
       proxy:
 
 
@@ -49,8 +48,8 @@ services:
     image: ghcr.io/linuxserver/lidarr:latest
     restart: unless-stopped
     environment:
-      PUID: '${PUID}'
-      PGID: '${PGID}'
+      PUID: '1000'
+      PGID: '1000'
       TZ: '${TZ}'
     volumes:
       - /mnt/user/appdata/lidarr:/config
@@ -60,7 +59,6 @@ services:
       traefik.http.routers.lidarr.entrypoints: 'websecure'
       traefik.http.routers.lidarr.rule: 'Host(`${DOMAIN_LIDARR}`)'
     networks:
-      default:
       proxy:
 
 
@@ -68,8 +66,8 @@ services:
     image: ghcr.io/linuxserver/sonarr:latest
     restart: unless-stopped
     environment:
-      PUID: '${PUID}'
-      PGID: '${PGID}'
+      PUID: '1000'
+      PGID: '1000'
       TZ: '${TZ}'
     volumes:
       - /mnt/user/appdata/sonarr:/config
@@ -79,7 +77,6 @@ services:
       traefik.http.routers.sonarr.entrypoints: 'websecure'
       traefik.http.routers.sonarr.rule: 'Host(`${DOMAIN_SONARR}`)'
     networks:
-      default:
       proxy:
 
 
@@ -87,8 +84,8 @@ services:
     image: ghcr.io/linuxserver/prowlarr:develop
     restart: unless-stopped
     environment:
-      PUID: '${PUID}'
-      PGID: '${PGID}'
+      PUID: '1000'
+      PGID: '1000'
       TZ: '${TZ}'
     volumes:
       - /mnt/user/appdata/prowlarr:/config
@@ -97,7 +94,6 @@ services:
       traefik.http.routers.prowlarr.entrypoints: 'websecure'
       traefik.http.routers.prowlarr.rule: 'Host(`${DOMAIN_PROWLARR}`)'
     networks:
-      default:
       proxy:
 
 
@@ -106,8 +102,8 @@ services:
     restart: unless-stopped
     environment:
       TZ: '${TZ}'
-      PUID: '${PUID}'
-      PGID: '${PGID}'
+      PUID: '1000'
+      PGID: '1000'
     volumes:
       - /mnt/user/appdata/transmission:/config
       - /mnt/user/data/torrents:/data/torrents
@@ -118,13 +114,7 @@ services:
       traefik.http.routers.transmission.entrypoints: 'websecure'
       traefik.http.routers.transmission.rule: 'Host(`${DOMAIN_TRANSMISSION}`)'
       traefik.http.services.transmission.loadbalancer.server.port: '9091'
-      traefik.tcp.routers.transmission-tcp.entrypoints: 'transmissiontcp'
-      traefik.tcp.routers.transmission-tcp.rule: 'HostSNI(`*`)'
-      traefik.tcp.services.transmission.loadbalancer.server.port: '51413'
-      traefik.udp.routers.transmission-udp.entrypoints: 'transmissionudp'
-      traefik.udp.services.transmission.loadbalancer.server.port: '51413'
     networks:
-      default:
       proxy:
 
 

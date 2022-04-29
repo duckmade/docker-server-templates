@@ -1,0 +1,36 @@
+version: '3'
+services:
+
+  app:
+    image: ghcr.io/haveagitgat/tdarr:latest
+    restart: unless-stopped
+    environment:
+      TZ: '${TZ}'
+      PUID: '1000'
+      PGID: '1000'
+      UMASK_SET: '002'
+      serverIP: 'tdarr-app-1'
+      serverPort: '8266'
+      webUIPort: '8265'
+      internalNode: 'true'
+      nodeID: 'AMD Ryzen 5 - 5600G'
+    volumes:
+      - /mnt/user/appdata/tdarr/server:/app/server
+      - /mnt/user/appdata/tdarr/configs:/app/configs
+      - /mnt/user/appdata/tdarr/logs:/app/logs
+      - /mnt/user/data/media:/media
+      - /tmp/tdarr:/temp
+    devices:
+      - /dev/dri:/dev/dri
+    labels:
+      traefik.enable: true
+      traefik.http.routers.tdarr.entrypoints: 'websecure'
+      traefik.http.routers.tdarr.rule: 'Host(`${DOMAIN}`)'
+      traefik.http.services.tdarr.loadbalancer.server.port: '8265'
+    networks:
+      proxy:
+
+
+networks:
+  proxy:
+    external: true

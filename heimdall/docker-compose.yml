@@ -6,8 +6,8 @@ services:
     restart: unless-stopped
     environment:
       TZ: '${TZ}'
-      PUID: '${PUID}'
-      PGID: '${PGID}'
+      PUID: '1000'
+      PGID: '1000'
     volumes:
       - /mnt/user/appdata/heimdall:/config
     labels:
