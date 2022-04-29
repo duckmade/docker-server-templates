@@ -20,6 +20,10 @@ services:
       - --certificatesresolvers.staging.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.staging.acme.email=${CF_API_EMAIL}
       - --certificatesresolvers.staging.acme.storage=/etc/traefik/staging.json
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entryPoints.web.http.redirections.entrypoint.permanent=true
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.http.tls=true
       - --entrypoints.websecure.http.tls.certresolver=production
@@ -41,8 +45,11 @@ services:
       traefik.http.routers.traefik.service: 'api@internal'
     networks:
       proxy:
-
+      br0:
+        ipv4_address: '${IP}'
 
 networks:
   proxy:
+    external: true
+  br0:
     external: true
