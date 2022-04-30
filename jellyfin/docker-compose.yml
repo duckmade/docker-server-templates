@@ -6,8 +6,8 @@ services:
     hostname: '${HOST_JELLYFIN}'
     restart: unless-stopped
     environment:
-      PUID: '1000'
-      PGID: '1000'
+      PUID: '0' # because of a problem with amd hw-transcoding permissions
+      PGID: '0' # because of a problem with amd hw-transcoding permissions
       TZ: '${TZ}'
       DOCKER_MODS: 'linuxserver/mods:jellyfin-amd'
     volumes:
