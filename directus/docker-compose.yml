@@ -19,6 +19,14 @@ services:
       ADMIN_EMAIL: 'admin@admin.com' # change this in UI
       ADMIN_PASSWORD: 'admin' # change this in UI
       PUBLIC_URL: 'https://${DOMAIN_PUBLIC}/'
+      EMAIL_FROM: '${EMAIL_FROM}'
+      EMAIL_TRANSPORT: 'smtp'
+      EMAIL_SMTP_HOST: '${EMAIL_SMTP_HOST}'
+      EMAIL_SMTP_PORT: 587
+      EMAIL_SMTP_USER: '${EMAIL_SMTP_USER}'
+      EMAIL_SMTP_PASSWORD: '${EMAIL_SMTP_PASSWORD}'
+      EMAIL_SMTP_SECURE: false
+      TELEMETRY: false
     volumes:
       - /mnt/user/appdata/directus/data/uploads:/directus/uploads
       - /mnt/user/appdata/directus/data/database:/directus/database
