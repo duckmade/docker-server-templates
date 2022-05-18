@@ -5,8 +5,8 @@ services:
     image: oznu/cloudflare-ddns:latest
     restart: unless-stopped
     environment:
-      PUID: '0'
-      PGID: '0'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
       API_KEY: '${API_KEY}'
       ZONE: '${ZONE}'
       SUBDOMAIN: '${SUBDOMAIN}'

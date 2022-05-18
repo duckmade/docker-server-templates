@@ -1,18 +1,20 @@
 version: '3'
 services:
 
-  app:
+  jellyfin:
     image: ghcr.io/linuxserver/jellyfin:latest
-    hostname: '${HOST_JELLYFIN}'
     restart: unless-stopped
     environment:
-      PUID: '0' # because of a problem with amd hw-transcoding permissions
-      PGID: '0' # because of a problem with amd hw-transcoding permissions
       TZ: '${TZ}'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
       DOCKER_MODS: 'linuxserver/mods:jellyfin-amd'
     volumes:
       - /mnt/user/appdata/jellyfin:/config
-      - /mnt/user/data/media:/data/media
+      - /mnt/user/media/movies:/data/media/movies
+      - /mnt/user/media/music:/data/media/music
+      - /mnt/user/media/other:/data/media/other
+      - /mnt/user/media/series:/data/media/series
       - /tmp/jellyfin:/transcodes
     devices:
       - /dev/dri:/dev/dri
@@ -23,19 +25,18 @@ services:
       traefik.http.services.jellyfin.loadbalancer.server.port: '8096'
     networks:
       proxy:
-      br0:
-        ipv4_address: '${IP_JELLYFIN}'
+
 
   radarr:
     image: ghcr.io/linuxserver/radarr:latest
     restart: unless-stopped
     environment:
-      PUID: '1000'
-      PGID: '1000'
       TZ: '${TZ}'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
     volumes:
       - /mnt/user/appdata/radarr:/config
-      - /mnt/user/data:/data
+      - /mnt/user/media:/data
     labels:
       traefik.enable: true
       traefik.http.routers.radarr.entrypoints: 'websecure'
@@ -48,12 +49,12 @@ services:
     image: ghcr.io/linuxserver/lidarr:latest
     restart: unless-stopped
     environment:
-      PUID: '1000'
-      PGID: '1000'
       TZ: '${TZ}'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
     volumes:
       - /mnt/user/appdata/lidarr:/config
-      - /mnt/user/data:/data
+      - /mnt/user/media:/data
     labels:
       traefik.enable: true
       traefik.http.routers.lidarr.entrypoints: 'websecure'
@@ -66,12 +67,12 @@ services:
     image: ghcr.io/linuxserver/sonarr:latest
     restart: unless-stopped
     environment:
-      PUID: '1000'
-      PGID: '1000'
       TZ: '${TZ}'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
     volumes:
       - /mnt/user/appdata/sonarr:/config
-      - /mnt/user/data:/data
+      - /mnt/user/media:/data
     labels:
       traefik.enable: true
       traefik.http.routers.sonarr.entrypoints: 'websecure'
@@ -84,9 +85,9 @@ services:
     image: ghcr.io/linuxserver/prowlarr:develop
     restart: unless-stopped
     environment:
-      PUID: '1000'
-      PGID: '1000'
       TZ: '${TZ}'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
     volumes:
       - /mnt/user/appdata/prowlarr:/config
     labels:
@@ -102,13 +103,13 @@ services:
     restart: unless-stopped
     environment:
       TZ: '${TZ}'
-      PUID: '1000'
-      PGID: '1000'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
     volumes:
       - /mnt/user/appdata/transmission:/config
-      - /mnt/user/data/torrents:/data/torrents
-      - /mnt/user/data/torrents:/downloads
-      - /mnt/user/data/torrents/watch:/watch
+      - /mnt/user/media/torrents:/data/torrents
+      - /mnt/user/media/torrents:/downloads
+      - /mnt/user/media/torrents/watch:/watch
     labels:
       traefik.enable: true
       traefik.http.routers.transmission.entrypoints: 'websecure'
@@ -120,6 +121,4 @@ services:
 
 networks:
   proxy:
-    external: true
-  br0:
     external: true

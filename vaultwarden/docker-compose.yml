@@ -5,9 +5,9 @@ services:
     image: vaultwarden/server:latest
     restart: unless-stopped
     environment:
-      UID: '1000'
-      GID: '1000'
       TZ: '${TZ}'
+      UID: '${PUID}'
+      GID: '${PGID}'
       DATABASE_URL: 'mysql://vaultwarden:${MYSQL_PASSWORD}@db:3306/vaultwarden'
       ADMIN_TOKEN: '${ADMIN_TOKEN}'
     volumes:

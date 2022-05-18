@@ -5,11 +5,11 @@ services:
     image: ghcr.io/linuxserver/lychee:latest
     restart: unless-stopped
     environment:
-      PUID: '1000'
-      PGID: '1000'
       TZ: '${TZ}'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
       DB_HOST: 'db'
-      DB_PORT: '3306'
+      DB_PORT: 3306
       DB_USERNAME: 'lychee'
       DB_PASSWORD: '${MYSQL_PASSWORD}'
       DB_DATABASE: 'lychee'

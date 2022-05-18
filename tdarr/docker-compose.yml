@@ -6,10 +6,10 @@ services:
     restart: unless-stopped
     environment:
       TZ: '${TZ}'
-      PUID: '1000'
-      PGID: '1000'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
       UMASK_SET: '002'
-      serverIP: 'tdarr-app-1'
+      serverIP: 'tdarr_app_1'
       serverPort: '8266'
       webUIPort: '8265'
       internalNode: 'true'
@@ -18,7 +18,7 @@ services:
       - /mnt/user/appdata/tdarr/server:/app/server
       - /mnt/user/appdata/tdarr/configs:/app/configs
       - /mnt/user/appdata/tdarr/logs:/app/logs
-      - /mnt/user/data/media:/media
+      - /mnt/user/media:/media
       - /tmp/tdarr:/temp
     devices:
       - /dev/dri:/dev/dri

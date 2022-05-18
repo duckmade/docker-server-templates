@@ -45,11 +45,8 @@ services:
       traefik.http.routers.traefik.service: 'api@internal'
     networks:
       proxy:
-      br0:
-        ipv4_address: '${IP}'
+
 
 networks:
   proxy:
-    external: true
-  br0:
     external: true
