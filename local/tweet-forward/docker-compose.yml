@@ -1,7 +1,7 @@
 version: '3'
 services:
 
-  tweet-forward:
+  app:
     image: ghcr.io/duckmade/tweet-forward:latest
     restart: unless-stopped
     environment:

@@ -1,0 +1,29 @@
+version: '3'
+services:
+
+  app:
+    image: ghcr.io/linuxserver/jellyfin:latest
+    restart: unless-stopped
+    environment:
+      TZ: '${TZ}'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+      DOCKER_MODS: 'linuxserver/mods:jellyfin-amd'
+    volumes:
+      - /mnt/user/appdata/jellyfin:/config
+      - /mnt/user/media:/data/media
+      - /tmp/jellyfin:/transcodes
+    devices:
+      - /dev/dri:/dev/dri
+    labels:
+      traefik.enable: true
+      traefik.http.routers.jellyfin.entrypoints: 'websecure'
+      traefik.http.routers.jellyfin.rule: 'Host(`${DOMAIN_PUBLIC}`, `${DOMAIN}`)'
+      traefik.http.services.jellyfin.loadbalancer.server.port: '8096'
+    networks:
+      proxy:
+
+
+networks:
+  proxy:
+    external: true

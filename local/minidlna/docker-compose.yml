@@ -1,0 +1,18 @@
+version: '3'
+services:
+
+  app:
+    image: binhex/arch-minidlna:latest
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+      UMASK: '${UMASK}'
+      SCAN_ON_BOOT: 'yes'
+      SCHEDULE_SCAN_DAYS: '06'
+      SCHEDULE_SCAN_HOURS: '02'
+    volumes:
+      - /mnt/user/appdata/minidlna:/config
+      - /mnt/user/media/music:/media:ro
+      - /etc/localtime:/etc/localtime:ro

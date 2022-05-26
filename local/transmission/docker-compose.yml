@@ -1,0 +1,27 @@
+version: '3'
+services:
+
+  app:
+    image: ghcr.io/linuxserver/transmission:latest
+    restart: unless-stopped
+    environment:
+      TZ: '${TZ}'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+    volumes:
+      - /mnt/user/appdata/transmission:/config
+      - /mnt/user/media/torrents:/data/torrents
+      - /mnt/user/media/torrents:/downloads
+      - /mnt/user/media/torrents/watch:/watch
+    labels:
+      traefik.enable: true
+      traefik.http.routers.transmission.entrypoints: 'websecure'
+      traefik.http.routers.transmission.rule: 'Host(`${DOMAIN}`)'
+      traefik.http.services.transmission.loadbalancer.server.port: '9091'
+    networks:
+      proxy:
+
+
+networks:
+  proxy:
+    external: true
