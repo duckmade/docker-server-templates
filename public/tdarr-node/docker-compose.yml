@@ -1,0 +1,23 @@
+version: '3'
+services:
+
+  app:
+    image: ghcr.io/haveagitgat/tdarr_node:latest
+    restart: unless-stopped
+    ports:
+      - 8268:8268
+    environment:
+      TZ: '${TZ}'
+      PUID: '${PUID}'
+      PGID: '${PGID}'
+      UMASK_SET: '002'
+      serverIP: '192.168.1.142'
+      serverPort: '8266'
+      nodeID: 'AMD Radeon PRO WX 3100'
+    volumes:
+      - /mnt/user/appdata/tdarr/configs:/app/configs
+      - /mnt/user/appdata/tdarr/logs:/app/logs
+      - /mnt/user/media:/media
+      - /tmp/tdarr:/temp
+    devices:
+      - /dev/dri:/dev/dri

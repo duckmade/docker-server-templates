@@ -4,24 +4,23 @@ services:
   app:
     image: ghcr.io/haveagitgat/tdarr:latest
     restart: unless-stopped
+    ports:
+      - 8266:8266
     environment:
       TZ: '${TZ}'
       PUID: '${PUID}'
       PGID: '${PGID}'
       UMASK_SET: '002'
-      serverIP: 'tdarr_app_1'
+      serverIP: '192.168.1.142'
       serverPort: '8266'
       webUIPort: '8265'
-      internalNode: 'true'
-      nodeID: 'AMD Radeon PRO WX 3100'
+      internalNode: 'false'
     volumes:
       - /mnt/user/appdata/tdarr/server:/app/server
       - /mnt/user/appdata/tdarr/configs:/app/configs
       - /mnt/user/appdata/tdarr/logs:/app/logs
       - /mnt/user/media:/media
       - /tmp/tdarr:/temp
-    devices:
-      - /dev/dri:/dev/dri
     labels:
       traefik.enable: true
       traefik.http.routers.tdarr.entrypoints: 'websecure'
