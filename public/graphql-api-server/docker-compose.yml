@@ -4,8 +4,6 @@ services:
   app:
     image: ghrc.io/duckmade/graphql-api-server:latest
     restart: unless-stopped
-    ports:
-      - 4000:4000
     environment:
       PATREON_ID: '${PATREON_ID}'
       PATREON_SECRET: '${PATREON_SECRET}'
