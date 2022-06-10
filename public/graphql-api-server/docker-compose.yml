@@ -2,18 +2,18 @@ version: '3'
 services:
 
   app:
-    image: ghrc.io/duckmade/graphql-api-server:latest
+    image: ghcr.io/duckmade/graphql-api-server:latest
     restart: unless-stopped
     environment:
       PATREON_ID: '${PATREON_ID}'
       PATREON_SECRET: '${PATREON_SECRET}'
+      PATREON_CALLBACK: '${PATREON_CALLBACK}'
       SENDINBLUE_KEY: '${SENDINBLUE_KEY}'
-      HOST: '${HOST}'
       ORIGINS: '${ORIGINS}'
     labels:
       traefik.enable: true
       traefik.http.routers.graphql-api-server.entrypoints: 'websecure'
-      traefik.http.routers.graphql-api-server.rule: 'Host(`${DOMAIN_PUBLIC}`)'
+      traefik.http.routers.graphql-api-server.rule: 'Host(`${DOMAIN_PUBLIC}`, `${DOMAIN}`)'
     networks:
       proxy:
 
