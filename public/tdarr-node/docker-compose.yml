@@ -11,7 +11,7 @@ services:
       PUID: '${PUID}'
       PGID: '${PGID}'
       UMASK_SET: '002'
-      serverIP: '192.168.1.142'
+      serverIP: '192.168.1.201'
       serverPort: '8266'
       nodeID: 'AMD Radeon PRO WX 3100'
     volumes:
