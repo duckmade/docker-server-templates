@@ -7,8 +7,9 @@ services:
     environment:
       PATREON_ID: '${PATREON_ID}'
       PATREON_SECRET: '${PATREON_SECRET}'
-      PATREON_CALLBACK: '${PATREON_CALLBACK}'
       SENDINBLUE_KEY: '${SENDINBLUE_KEY}'
+      SMTP_TO_NAME: '${SMTP_TO_NAME}'
+      SMTP_TO_EMAIL: '${SMTP_TO_EMAIL}'
       ORIGINS: '${ORIGINS}'
     labels:
       traefik.enable: true
