@@ -1,7 +1,7 @@
 #!/bin/bash
 
 docker run -d \
---name "portainer_app_1" \
+--name "portainer-app-1" \
 --restart "unless-stopped" \
 --network "proxy" \
 -p "9000:9000" \
