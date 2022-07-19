@@ -1,0 +1,21 @@
+version: '3'
+services:
+
+  app:
+    image: onlyoffice/documentserver:latest
+    restart: unless-stopped
+    volumes:
+      - /mnt/user/appdata/onlyoffice/logs:/var/log/onlyoffice
+      - /mnt/user/appdata/onlyoffice/data:/var/www/onlyoffice/Data
+    labels:
+      traefik.enable: true
+      traefik.http.routers.onlyoffice.entrypoints: 'websecure'
+      traefik.http.routers.onlyoffice.rule: 'Host(`${DOMAIN_PUBLIC}`, `${DOMAIN}`)'
+      traefik.http.services.onlyoffice.loadbalancer.server.port: '80'
+    networks:
+      default:
+      proxy:
+
+networks:
+  proxy:
+    external: true
